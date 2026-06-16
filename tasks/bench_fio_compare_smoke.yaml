@@ -1,31 +1,8 @@
 doc: |
-  Run FIO/xNVMe backend comparison benchmarks
-  ===========================================
+  Run a reduced FIO/xNVMe compare smoke benchmark
+  ===============================================
 
-  This workflow compares the xNVMe `spdk` and `upcie` backends using fio under
-  identical benchmark parameters.
-
-  Configuration files
-  -------------------
-  Run this workflow with:
-
-    `configs/transport.toml`
-    `configs/bench_fio_compare.toml`
-    `configs/devices_*.toml`
-
-  The compare config controls the fio working-set size and the compare artifact root.
-  The device config must provide exactly one benchmark target and use
-  `xnvme.driver.prefix` to blacklist any NVMe boot device.
-
-  Output layout
-  -------------
-  A single run generates:
-
-    `<repo>/cijoe-output/artifacts/fio-compare/<bdf>/raw/<workload>/...raw .out files`
-    `<repo>/cijoe-output/artifacts/fio-compare/<bdf>/benchmark-results.json`
-    `<repo>/cijoe-output/artifacts/fio-compare/<bdf>/benchmark-results.html`
-
-  The final JSON and HTML are generated once, after all workloads complete.
+  This workflow validates the compare benchmark plumbing with a minimal matrix.
 
 steps:
 - name: validate_device_config
@@ -59,8 +36,8 @@ steps:
 - name: run_read_spdk
   uses: bench_runall
   with: &bench-params-read-spdk
-    depths: [1, 4, 16, 32]
-    sizes: [4096, 16384, 65536, 131072]
+    depths: [1]
+    sizes: [4096]
     rws: ["read"]
     fio_size: "{{ config.fio_compare.fio_size }}"
     numcpus_specific: [1]
@@ -70,7 +47,7 @@ steps:
     smt: [1]
     hyperthreads: [0]
     stress: [0]
-    repetitions: 3
+    repetitions: 1
     results_dir: "{{ local.env.PWD }}/{{ config.fio_compare.output_root }}/{{ config.devices[0].pci_addr }}/raw/read"
     tool: fio_xnvme
     backend: spdk
@@ -91,8 +68,8 @@ steps:
 - name: run_write_spdk
   uses: bench_runall
   with: &bench-params-write-spdk
-    depths: [1, 4, 16, 32]
-    sizes: [4096, 16384, 65536, 131072]
+    depths: [1]
+    sizes: [4096]
     rws: ["write"]
     fio_size: "{{ config.fio_compare.fio_size }}"
     numcpus_specific: [1]
@@ -102,7 +79,7 @@ steps:
     smt: [1]
     hyperthreads: [0]
     stress: [0]
-    repetitions: 3
+    repetitions: 1
     results_dir: "{{ local.env.PWD }}/{{ config.fio_compare.output_root }}/{{ config.devices[0].pci_addr }}/raw/write"
     tool: fio_xnvme
     backend: spdk

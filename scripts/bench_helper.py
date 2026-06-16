@@ -32,7 +32,7 @@ import logging as log
 
 from bdevperf import bdevperf_cmd, create_config as bdevperf_config
 from dcgm_helper import DcgmHelper
-from fio_xnvme import fio_xnvme_cmd, fio_xnvme_prefill_cmd
+from fio_xnvme import fio_xnvme_cmd
 from spdk_nvme_perf import spdk_nvme_perf_cmd
 from xnvmeperf import xnvmeperf_cmd, xnvmeperf_cuda_cmd
 
@@ -105,7 +105,7 @@ class BenchHelper():
         self.use_thrsib = use_thrsib
         return 0
 
-    def run_benchmark(self, rw: str, depth: int, size: int, ndevs: int, ncpus: int, time: int, cpu_freq: float, suffix: str = "", nqueues: int = 1, prefill_only: int = 0):
+    def run_benchmark(self, rw: str, depth: int, size: int, ndevs: int, ncpus: int, time: int, cpu_freq: float, suffix: str = "", nqueues: int = 1):
         if not self.initialised:
             log.error("Failed: benchmarker not initialised correctly")
             return 1, None
@@ -192,10 +192,7 @@ class BenchHelper():
             command += xnvmeperf_cuda_cmd(self.bin, bench_args)
 
         elif self.tool == "fio_xnvme":
-            if prefill_only:
-                command += fio_xnvme_prefill_cmd(self.bin, bench_args)
-            else:
-                command += fio_xnvme_cmd(self.bin, bench_args)
+            command += fio_xnvme_cmd(self.bin, bench_args)
         else:
             log.error(f"Unknown tool: {self.tool}")
             return -1, None

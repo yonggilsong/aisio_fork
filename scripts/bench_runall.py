@@ -41,7 +41,6 @@ def add_args(parser: ArgumentParser):
     parser.add_argument("--repetitions", type=int, default=5, help="The amount of times each benchmark will be repeated. The result will be average of the repetitions")
     parser.add_argument("--nqueues", type=int, default=[1], nargs="+", help="Number of queues per device (used by xnvmeperf-cuda)")
     parser.add_argument("--rws", type=str, default=["randread"], nargs="+", help="List of I/O patterns to test")
-    parser.add_argument("--prefill_only", type=int, default=0, help="Run fio_xnvme in prefill-only mode")
     parser.add_argument("--tool", choices=["bdevperf", "xnvmeperf", "spdk_nvme_perf", "xnvmeperf-cuda", "fio_xnvme"], default="xnvmeperf")
     parser.add_argument("--backend", type=str, default="upcie")
 
@@ -98,7 +97,7 @@ def main(args, cijoe: Cijoe):
             now = time()
 
             for i in range(args.repetitions):
-                err, result = benchmarker.run_benchmark("randread", qd, iosz, devs, 0, args.time, "N/A", f"-{i}", nq, args.prefill_only)
+                err, result = benchmarker.run_benchmark("randread", qd, iosz, devs, 0, args.time, "N/A", f"-{i}", nq)
                 if err:
                     log.error("Failed: run_benchmark()")
                     return err
@@ -163,7 +162,7 @@ def main(args, cijoe: Cijoe):
         now = time()
 
         for i in range(args.repetitions):
-            err, result = benchmarker.run_benchmark(rw, qd, iosz, devs, cpus, args.time, freq, f"{suffix}-{i}", prefill_only=args.prefill_only)
+            err, result = benchmarker.run_benchmark(rw, qd, iosz, devs, cpus, args.time, freq, f"{suffix}-{i}")
             if err:
                 log.error("Failed: run_benchmark()")
                 return err
