@@ -17,7 +17,7 @@ from fio_xnvme import fio_xnvme_prefill_cmd
 def add_args(parser: ArgumentParser):
     parser.add_argument("--backend", type=str, required=True)
     parser.add_argument("--device", type=str, required=True)
-    parser.add_argument("--fio-size", dest="fio_size", type=str, required=True)
+    parser.add_argument("--fio_size", type=str, required=True)
 
 
 def main(args, cijoe: Cijoe):
