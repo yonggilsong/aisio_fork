@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 import shutil
-from argparse import Namespace
+from argparse import ArgumentParser, Namespace
 from pathlib import Path
 import unittest
 
@@ -121,3 +121,22 @@ class TestFioCompareRefactor(unittest.TestCase):
                 "--filename='0000\\:02\\:00.0' --output-format=json"
             ],
         )
+
+    def test_fio_xnvme_prefill_accepts_fio_size_argument_name_from_workflow(self):
+        parser = ArgumentParser()
+        fio_xnvme_prefill.add_args(parser)
+
+        args = parser.parse_args(
+            [
+                "--backend",
+                "spdk",
+                "--device",
+                "0000:02:00.0",
+                "--fio_size",
+                "1GiB",
+            ]
+        )
+
+        self.assertEqual(args.backend, "spdk")
+        self.assertEqual(args.device, "0000:02:00.0")
+        self.assertEqual(args.fio_size, "1GiB")
