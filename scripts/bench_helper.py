@@ -164,10 +164,10 @@ class BenchHelper():
 
         if is_cuda:
             selected_cpus = []
-            command = f"/usr/bin/time "
         else:
             selected_cpus = [v[0] for v in self.cpu_pairs if int(bench_args["cpumask"], 16) & (1 << v[0])]
-            command = f"/usr/bin/time "
+
+        command = f"/usr/bin/time "
 
         if self.tool == "fio_xnvme":
             cpu_list = ",".join(str(cpu) for cpu in selected_cpus)
